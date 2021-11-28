@@ -35,10 +35,10 @@ export default function Leaderboard({ isOpen, onClose }) {
   }, [isOpen]);
 
   const renderLeaderboard = () =>
-    data.map(({ name, score }, i) => (
+    data.map(({ name, score, id }, i) => (
       <Tr>
         <Td>{i + 1}</Td>
-        <Td>{name}</Td>
+        <Td>{`${name} #${id}`}</Td>
         <Td isNumeric>{score}</Td>
       </Tr>
     ));

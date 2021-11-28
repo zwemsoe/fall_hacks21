@@ -1,4 +1,5 @@
-const { nanoid } = require("nanoid");
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890", 4);
 
 class UserStore {
   constructor() {
@@ -21,11 +22,11 @@ class UserStore {
     return user;
   }
 
-  updateUserScore(id, addScore) {
+  updateUserScore(id, newScore) {
     const index = this.users.findIndex((user) => id === user.id);
     const found = index !== -1;
     if (found) {
-      this.users[index].score += addScore;
+      this.users[index].score = newScore;
       return this.users[index];
     }
     return found;

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const wiki = require("wikijs").default;
@@ -15,19 +16,27 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, "frontend/build")));
 
-app.post("/reset-scope", (req, res) => {
+const verifyKey = (req, res, next) => {
+  const { key } = req.body;
+  if (key === process.env.SECRET_KEY) {
+    return next();
+  }
+  return res.send("good try");
+};
+
+app.post("/reset-scope", verifyKey, (req, res) => {
   const { id } = req.body;
   const updated = userStore.updateUserScope(id, "");
   return res.status(200).send({ user: updated });
 });
 
-app.post("/add-user", (req, res) => {
+app.post("/add-user", verifyKey, (req, res) => {
   const { name } = req.body;
   const added = userStore.addUser(name);
   return res.status(200).send({ user: added });
 });
 
-app.post("/create-scope", async (req, res) => {
+app.post("/create-scope", verifyKey, async (req, res) => {
   const { title, id } = req.body;
   const exists = wikiStore.getWiki(title);
   if (!exists) {
@@ -47,7 +56,7 @@ app.post("/create-scope", async (req, res) => {
   }
 });
 
-app.post("/get-random-keyword", async (req, res) => {
+app.post("/get-random-keyword", verifyKey, async (req, res) => {
   try {
     const { id } = req.body;
     const scope = userStore.getUser(id).scope;
@@ -65,7 +74,7 @@ app.post("/get-random-keyword", async (req, res) => {
   }
 });
 
-app.post("/check-answer", (req, res) => {
+app.post("/check-answer", verifyKey, (req, res) => {
   const { keyword, included, id } = req.body;
   const scope = userStore.getUser(id).scope;
   const wiki_keywords = wikiStore.getWiki(scope);
@@ -73,9 +82,9 @@ app.post("/check-answer", (req, res) => {
   return res.status(200).send({ correct: answer === included });
 });
 
-app.post("/update-score", (req, res) => {
-  const { id, scoreToAdd } = req.body;
-  const updated = userStore.updateUserScore(id, scoreToAdd);
+app.post("/update-score", verifyKey, (req, res) => {
+  const { id, newScore } = req.body;
+  const updated = userStore.updateUserScore(id, newScore);
   if (updated) {
     return res.status(200).send({ user: updated });
   } else {

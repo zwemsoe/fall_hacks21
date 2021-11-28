@@ -61,11 +61,13 @@ function App() {
   };
 
   const handleGameOver = () => {
-    updateScoreReq({ id: user.id, scoreToAdd: score }).then(data => {
-      setUser(data.user);
-      setGameStarted(false);
-      setGameOver(true);
-    });
+    if (user.score < score) {
+      updateScoreReq({ id: user.id, newScore: score }).then(data => {
+        setUser(data.user);
+        setGameStarted(false);
+        setGameOver(true);
+      });
+    }
   };
 
   const restartGame = () => {

@@ -17,6 +17,7 @@
     "wikijs": "^6.3.2"
   },
   "devDependencies": {
+    "dotenv": "^10.0.0",
     "nodemon": "^2.0.15"
   }
 }
